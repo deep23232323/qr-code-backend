@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/beckend/public/css/styles.css">
+</head>
+<style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f0f4ff, #e3f2fd);
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 28px;
+      color: #1565c0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .data-list li {
+      padding: 10px;
+      background: #f5faff;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .data-list li:hover {
+      background: #e3f2fd;
+    }
+
+    .imagedesc {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+    }
+
+    .main-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .main-image:hover {
+      transform: scale(1.02);
+    }
+
+    #mainDescription {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #444;
+    }
+
+    .thumbnail-container {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px 0;
+      scroll-behavior: smooth;
+      justify-content: start;
+    }
+
+    .thumbnail-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .thumbnail-container::-webkit-scrollbar-thumb {
+      background: #1565c0;
+      border-radius: 10px;
+    }
+
+    .thumbnail {
+      width: 100px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+    }
+
+    .thumbnail:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .thumbnail.active {
+      border-color: #1565c0;
+      box-shadow: 0 0 10px rgba(21, 101, 192, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .main-image {
+        max-height: 300px;
+      }
+
+      .thumbnail {
+        width: 80px;
+        height: 60px;
+      }
+
+      .title {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .thumbnail {
+        width: 70px;
+        height: 50px;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .data-list li {
+        font-size: 14px;
+      }
+
+      #mainDescription {
+        font-size: 14px;
+      }
+    }
+    .hover-group {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 32px;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.hover-group:hover .nav-arrow {
+  opacity: 1;
+}
+
+.nav-arrow.left {
+  left: 10px;
+}
+
+.nav-arrow.right {
+  right: 10px;
+}
+
+.nav-arrow:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+  </style>
+<body>
+  <div class="container">
+    <h1 class="title">📷 SCANNED QR DETAILS</h1>
+
+    <ul class="data-list">
+      {{#each qrEntry.userData}}
+        <li><strong>{{this.key}}:</strong> {{this.value}}</li>
+      {{/each}}
+    </ul>
+{{#if qrEntry.imageUrls.length}}
+  <!-- Main Image Display with Arrows -->
+  <div class="imagedesc hover-group">
+    <button class="nav-arrow left" onclick="navigate(-1)">❮</button>
+
+    <img id="mainDisplay" class="main-image" src="{{qrEntry.imageUrls.[0]}}" alt="Main Image" />
+
+    <button class="nav-arrow right" onclick="navigate(1)">❯</button>
+
+    <p id="mainDescription">{{qrEntry.imageDescription.[0]}}</p>
+  </div>
+
+  <!-- Scrollable Thumbnail Strip -->
+  <div class="thumbnail-container" id="thumbnailContainer">
+    {{#each qrEntry.imageUrls}}
+      <img 
+        src="{{this}}" 
+        onclick="showImage({{@index}})" 
+        alt="Thumbnail" 
+        class="thumbnail"
+      />
+    {{/each}}
+  </div>
+{{/if}}
+
+
+  </div>
+
+  <!-- Styles -->
+  
+
+  <!-- Script -->
+  <script>
+
+    const imageUrls = {{{json qrEntry.imageUrls}}} || [];
+const imageDescriptions = {{{json qrEntry.imageDescription}}} || [];
+
+let currentIndex = 0;
+
+function showImage(index) {
+  if (!imageUrls.length) return;
+
+  const main = document.getElementById('mainDisplay');
+  const desc = document.getElementById('mainDescription');
+
+  if (index < 0) index = imageUrls.length - 1;
+  if (index >= imageUrls.length) index = 0;
+
+  currentIndex = index;
+  main.src = imageUrls[currentIndex];
+  desc.innerText = imageDescriptions[currentIndex] || '';
+
+  const thumbnails = document.querySelectorAll('.thumbnail');
+  thumbnails.forEach((img, i) => {
+    img.classList.toggle('active', i === currentIndex);
+  });
+}
+
+
+function navigate(direction) {
+  showImage(currentIndex + direction);
+}
+
+window.onload = () => {
+  if (imageUrls.length) {
+    showImage(0); // only if images exist
+  }
+};
+
+
+  </script>
+</body>
+
+
+</html>
