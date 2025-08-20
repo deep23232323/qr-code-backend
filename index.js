@@ -64,6 +64,9 @@ app.get("/api/user/profile", (req, res) => {
     return res.status(401).json({ message: "Invalid token" });
   }
 });
+app.get("/api/test", (req, res) => {
+  res.send("Updated backend: " + new Date().toISOString());
+});
 
 
 const PORT = process.env.PORT || 5000;
