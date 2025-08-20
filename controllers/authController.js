@@ -32,7 +32,7 @@ exports.signup = async (req, res) => {
     });
 
     const token = generateToken(user._id);
-    const verifyLink = `${process.env.CLIENT_URL}/verify?token=${token}`;
+    const verifyLink = `${process.env.CLIENT_URL}/api/auth/verify?token=${token}`;
     const html = `
       <h2>Email Verification</h2>
       <p>Hi ${name},</p>
