@@ -7,17 +7,19 @@ const router = express.Router();
 // Google auth entry point
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-// Callback handler
+
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:5000/api/auth/user/login", session: false }),
+  passport.authenticate("google", { failureRedirect: "https://qr-code-backend-b5c4.onrender.com/api/auth/user/login", session: false }),
   (req, res) => {
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
+ const isProduction = process.env.NODE_ENV === "production";
+
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "Lax",
-      secure: false, // true in production with HTTPS
+      secure: isProduction,                   // ✅ must be true on Render
+      sameSite: isProduction ? "none" : "lax", // ✅ allow cross-site cookies
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
