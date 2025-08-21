@@ -94,12 +94,15 @@ exports.loginUser = async (req, res) => {
     });
 
     // Set token in cookie
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // use true in production
-      sameSite: 'Lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+const isProduction = process.env.NODE_ENV === "production";
+
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: isProduction,                         // true only in production
+  sameSite: isProduction ? "none" : "lax",      // "none" for cross-site in prod, "lax" for localhost
+  maxAge: 7 * 24 * 60 * 60 * 1000,              // 7 days
+});
+
 
     res.status(200).json({ message: 'Login successful' });
   } catch (err) {
