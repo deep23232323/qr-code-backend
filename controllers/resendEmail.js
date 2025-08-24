@@ -13,7 +13,7 @@ exports.resendVerification = async (req, res) => {
     // Generate new token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    const verifyLink = `${process.env.CLIENT_URL}/verify?token=${token}`;
+    const verifyLink = `${process.env.CLIENT_URL}/api/auth/verify?token=${token}`;
     const html = `<p>Please click the link to verify your email:</p><a href="${verifyLink}">click me</a>`;
 
     await sendEmail(user.email, "Verify Your Email", html);
