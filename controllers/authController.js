@@ -65,8 +65,49 @@ exports.verifyEmail = async (req, res) => {
     if (!user) return res.status(404).send("User not found");
     user.isVerified = true;
     await user.save();
-    res.status(200).json({ message: "Email verified successfully! Now you can login " });
-  } catch (err) {
+  res.send(`
+      <html>
+        <head>
+          <title>Email Verified</title>
+          <style>
+            body { 
+              font-family: Arial, sans-serif; 
+              display: flex; 
+              align-items: center; 
+              justify-content: center; 
+              height: 100vh; 
+              background: #f0f4f8;
+            }
+            .card {
+              background: white;
+              padding: 30px;
+              border-radius: 12px;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+              text-align: center;
+            }
+            .card h1 { color: #28a745; }
+            .card a {
+              display: inline-block;
+              margin-top: 20px;
+              padding: 10px 20px;
+              background: #28a745;
+              color: white;
+              border-radius: 6px;
+              text-decoration: none;
+            }
+            .card a:hover { background: #218838; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h1>✅ Email Verified Successfully!</h1>
+            <p>You can now log in to your account.</p>
+            <a href="http://localhost:5173/login">Go to Login</a>
+          </div>
+        </body>
+      </html>
+    `);
+    } catch (err) {
     res.status(400).json({ error: "Invalid or expired token" });
   }
 };
