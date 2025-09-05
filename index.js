@@ -20,9 +20,15 @@ hbs.registerHelper('json', function (context) {
 });
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:5173', // 👈 allow React dev server
-  credentials: true               // 👈 allow cookies if you're using them
-}));
+  origin: [
+    "http://localhost:5173",                 // Vite dev
+    "https://qr-code-frontend-sandy.vercel.app" // Your deployed frontend
+  ],
+  credentials: true  // allow cookies / auth headers
+}));git add .
+git commit -m "update backend CORS + Google Auth URL"
+git push origin main
+
 app.set('view engine', 'hbs');
 
 dotenv.config();
